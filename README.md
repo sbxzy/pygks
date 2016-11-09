@@ -5,4 +5,4 @@ See https://sbxzy.github.io for installation instructions and examples.
 
 In the prerequisites folder, the python-graph package is provided.
 
-All examples in the documentation is included in the example folder.
+All examples in the documentation are included in the example folder.

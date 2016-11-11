@@ -1,4 +1,4 @@
-Copyright (c) 2016, Zhiyang Xiang
+Copyright (c) 2016, Zhiyang Xiang (lordxzy@qq.com)
 
 All rights reserved.
 

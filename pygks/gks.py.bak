@@ -16,7 +16,7 @@ class GKS:
     ydim = None #:Dimension of the response variables.
     __global = True
     smooth = None #:Smooth parameter.
-    __S = 1.0
+    __S = 0.0
     K = 5 #: Number of clustering centers for smooth parameter calculation.
     percentages_logloss = None
 
@@ -39,7 +39,7 @@ class GKS:
 
             X_len = int(self.xdim)
             for i in range(X_len):
-                X_mask = list(range(X_len))
+                X_mask = range(X_len)
                 X_mask.pop(i)
                 self.X_ae.append(self.setN[:,X_mask])
                 self.Y_ae.append(self.setN[:,i])
@@ -104,57 +104,30 @@ class GKS:
         gradient = (Y - Y_pred)*(delta_up * origin_down - origin_up * delta_down) / ((origin_down)**2.0)
         #print gradient
         return gradient[0]
-
-    def __recip_kernel(self, Deltas, a):
-        return (a) / (a**2*Deltas+pi**2)
-
-    def __recip_kernel_dif(self, Deltas, a):
-        return (pi**4-a**4*Deltas**2) / (a**2*Deltas+pi**2)**3
         
-    def ae_gradient_1s_y(self, X_in, y, kernel = 'exp'):
-        if kernel == 'exp':
-            point = array(X_in)
-            point = array(point)
-            dif_vectors = self.setN - point
-            dif_and_varianced = array(matrix(dif_vectors)*self.sv_kernel)
-            dif_traces = inner1d(dif_and_varianced , dif_vectors)
-            weights = exp(-0.5*self.__S*dif_traces)
+    def ae_gradient_1s_y(self, X_in, y):
+        point = array(X_in)
+        point = array(point)
+        dif_vectors = self.setN - point
+        dif_and_varianced = array(matrix(dif_vectors)*self.sv_kernel)
+        dif_traces = inner1d(dif_and_varianced , dif_vectors)
+        weights = exp(-0.5*self.__S*dif_traces)
 
-            origin_up = (self.Y*(matrix(self.percentages * weights).T))[0,0]
-            origin_down = inner(self.percentages, weights)
-            delta_up = (self.Y*(matrix(self.percentages * weights * array(dif_traces)).T))[0,0]
-            delta_down = inner(self.percentages, dif_traces * weights)
-            #print origin_up,'up'
-            #print dif_traces
-            #print origin_down
-            #print delta_up
-            #print delta_down
-            results = (self.Y*(matrix(self.percentages * weights).T))/(inner(self.percentages, weights))
-            Y_pred = array(results.T)[0]
-            #print Y,Y_pred
-            gradient = (y - Y_pred)*(delta_up * origin_down - origin_up * delta_down) / ((origin_down)**2.0)
-            #print gradient
-            return gradient[0]
-        elif kernel == 'rec':
-            point = array(X_in)
-            point = array(point)
-            dif_vectors = self.setN - point
-            dif_and_varianced = array(matrix(dif_vectors)*self.sv_kernel)
-            dif_traces = inner1d(dif_and_varianced , dif_vectors)
-            weights = self.__recip_kernel(dif_traces, self.__S)
-            dif_weights = self.__recip_kernel_dif(dif_traces, self.__S)
-            origin_up = (self.Y*(matrix(self.percentages * weights).T))[0,0]
-            origin_down = inner(self.percentages, weights)
-            D_up = (self.Y*(matrix(self.percentages * dif_weights).T))[0,0]
-            origin_down = inner(self.percentages, weights)
-            D_down = inner(self.percentages, dif_weights)
-            Y_pred = origin_up / origin_down
-            gradient = 2*(y - Y_pred)*(D_up * origin_down - origin_up * D_down) / ((origin_down)**2.0)
-            return gradient
-        else:
-            
-            print('No kernel specified...')
-            return 0
+        origin_up = (self.Y*(matrix(self.percentages * weights).T))[0,0]
+        origin_down = inner(self.percentages, weights)
+        delta_up = (self.Y*(matrix(self.percentages * weights * array(dif_traces)).T))[0,0]
+        delta_down = inner(self.percentages, dif_traces * weights)
+        #print origin_up,'up'
+        #print dif_traces
+        #print origin_down
+        #print delta_up
+        #print delta_down
+        results = (self.Y*(matrix(self.percentages * weights).T))/(inner(self.percentages, weights))
+        Y_pred = array(results.T)[0]
+        #print Y,Y_pred
+        gradient = (y - Y_pred)*(delta_up * origin_down - origin_up * delta_down) / ((origin_down)**2.0)
+        #print gradient
+        return gradient[0]
 
     def ae_gradient_1s(self, X_in):
         X_construct = 0.0
@@ -179,13 +152,12 @@ class GKS:
         gradient = inner(self.percentages_logloss, 2.0 * f_s_1* f_s_2)
         return gradient
 
-    def ae_train_S(self, X = None, y=0, step = 1, stop = 0.0001, loss = 'mse', kernel = 'rec'):
+    def ae_train_S(self, X = None, y=0, step = 1, stop = 0.0001, loss = 'mse'):
         self.__S = len(self.setN)**(-2.0*self.smooth)
         count = 0
-        kernel_type = kernel
         if y != 0:
             for i in range(len(X)):
-                delta_S = self.ae_gradient_1s_y(X[i], y[i], kernel = kernel_type)
+                delta_S = self.ae_gradient_1s_y(X[i], y[i])
                 if (abs(delta_S) < stop):
                     break
                 self.__S -= delta_S
@@ -201,7 +173,7 @@ class GKS:
                 self.__S -= delta_S
                 count += 1
             #print self.__S, -0.5*log(self.__S, len(self.setN))
-        print('Gradient Decents in', count, 'steps.')
+        print 'Gradient Decents in', count, 'steps.'
         self.smooth = -0.5*log(self.__S, len(self.setN))
         return -0.5*log(self.__S, len(self.setN))
 
@@ -264,9 +236,9 @@ class GKS:
         
 if __name__ == '__main__':
     testgks = GKS([array([1, 2, 2,3]), array([2, 3, 1,5]), array([1, 1, 1,5])], array([1, 2,1]), array([1, 2, 3,1]), 0, smooth = -0.2)
-    print(testgks.ae_train_S([array([1,2,2,3]), array([2, 2, 1,4])], loss = 'mse'))
+    print testgks.ae_train_S([array([1,2,2,3]), array([2, 2, 1,4])], loss = 'mse')
     #print testgks.ae_train_S([array([1,2,2]), array([2, 2, 1])],array([3, 4]),  loss = 'mse')
     #print testgks.ae_encode([array([1, 2, 2]), array([2, 3, 1]), array([1, 1, 1])])
-    print(testgks.ae_encode([array([1, 2, 2,3]), array([2, 3, 1,5]), array([1, 1, 1,5])]))
+    print testgks.ae_encode([array([1, 2, 2,3]), array([2, 3, 1,5]), array([1, 1, 1,5])])
     #print testgks.responses([array([2,3,9])])
         

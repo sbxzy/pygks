@@ -12,14 +12,12 @@ class csv_reader:
     def __init__(self,filename,has_header = False,deli = ','):
         self.the_reader = csv.reader(open(filename,'r'),delimiter = deli)
         if has_header:
-            next(self.the_reader)
+            self.the_reader.next()
 
     def get_all(self):
         """Return the complete data in the form of list of numpy arrays."""
         block_all = []
         for line in self.the_reader:
-            if len(line) == 0:
-                continue
             block_all.append(array(line,'float'))
         return block_all
 
@@ -28,8 +26,6 @@ class csv_reader:
         block_all = []
         label_all = []
         for line in self.the_reader:
-            if len(line) == 0:
-                continue
             label_all.append(float(line[-1]))
             line.pop()
             block_all.append(array(line,'float'))
@@ -40,6 +36,6 @@ def __dict_reverse(the_dict):
     result = {}
     for each_value in all_values:
         result[each_value] = []
-    for each_key,each_value in list(the_dict.items()):
+    for each_key,each_value in the_dict.items():
         result[each_value].append(each_key)
     return result

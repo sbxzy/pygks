@@ -1,14 +1,14 @@
 """The SOINN regressor."""
-import isoinn2
-from kde import density
-from __gaussian_custom import norm_pdf_multivariate
+from . import isoinn2
+from .kde import density
+from .__gaussian_custom import norm_pdf_multivariate
 from numpy import array,diag,matrix
 import time
 from pygraph.classes.graph import graph
 from pygraph.algorithms.accessibility import connected_components
 import itertools
 from copy import deepcopy
-from gks import GKS
+from .gks import GKS
 
 class ISOINNregressor:
     """Regression interface based on SSL-GKS and SOINN.
@@ -41,7 +41,7 @@ class ISOINNregressor:
 
     def fit(self, X, y):
         """X is array or list, each element is numpy array. Y is array or list containing the response varaible values."""
-        print 'training with bandwidth calculation, please wait...'
+        #print 'training with bandwidth calculation, please wait...'
         timecost = time.time()
         t = 0
         for i in range(len(y)):
@@ -56,7 +56,7 @@ class ISOINNregressor:
             t += 1
             isoinn2.step(n_point,0,t)
         isoinn2.step(array([]),0,-1)
-        print 'time cost',time.time() - timecost
+        #print 'time cost',time.time() - timecost
         standard_deviation = (EX2 - EX ** 2) ** 0.5
         self.standard_deviation = standard_deviation
         if self.smooth == None:
@@ -118,7 +118,7 @@ class ISOINNregressor:
                 input_point = array([t[i],t[j]])
                 z[j][i] = the_d.estimate(input_point)
                 if not ((input_point - array([0.5,0.2])).any()):
-                    print i,j
+                    print(i,j)
         print('drawing...')
 
         import matplotlib.pyplot as plt
@@ -135,7 +135,7 @@ class ISOINNregressor:
         
 
 if __name__ == '__main__':
-    from utils import csv_reader
+    from .utils import csv_reader
     r = csv_reader('reg_intro.csv')
     X,y = r.separate_label()
     the_reg = ISOINNregressor(smooth = -0.4, K = 15)

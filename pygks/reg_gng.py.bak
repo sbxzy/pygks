@@ -1,13 +1,13 @@
 """GNG regressor"""
-from . import gng2
-from .kde import density
-from .__gaussian_custom import norm_pdf_multivariate
+import gng2
+from kde import density
+from __gaussian_custom import norm_pdf_multivariate
 from numpy import array,diag,matrix
 import time
 from pygraph.classes.graph import graph
 from pygraph.algorithms.accessibility import connected_components
 import itertools
-from .gks import GKS
+from gks import GKS
 from copy import deepcopy
 
 class GNGregressor:
@@ -117,7 +117,7 @@ class GNGregressor:
                 input_point = array([t[i],t[j]])
                 z[j][i] = the_d.estimate(input_point)
                 if not ((input_point - array([0.5,0.2])).any()):
-                    print(i,j)
+                    print i,j
         print('drawing...')
 
         import matplotlib.pyplot as plt

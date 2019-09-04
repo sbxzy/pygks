@@ -1,6 +1,6 @@
 """Growing Neural Gas main file, for developers only."""
 from numpy import *
-from pygraph.classes.graph import graph
+from oldgraph.classes.graph import graph
 
 winner_index = 0
 winner_2nd_index = 0
@@ -122,8 +122,8 @@ def remove_node(index):
     accumulated.pop(-1)
     if len(setN) != index:
         if len(gr.neighbors(index)) != bfc:
-            print index,bfc,gr.neighbors(index)
-            raw_input('remove error')
+            print(index,bfc,gr.neighbors(index))
+            input('remove error')
 
     return
 
@@ -137,13 +137,13 @@ def stop_and_write():
     while (i !=len(setN)) & (len(setN) > 2):
         for j in gr.neighbors(i):
                 if j == i:
-                    print 'neuron confliction, doing nothing'
+                    print('neuron confliction, doing nothing')
         if neighbour_count(i) < 1:
             remove_node(i)
-            print 'removed neuron', i
+            print('removed neuron', i)
         else:
             i += 1
-    print 'End training!'
+    #print 'End training!'
     return
 
 
@@ -208,8 +208,8 @@ def step(point,pLabel,tx):
             f_node = max_index
             f_error = max_error
             if q_node== f_node:
-                print 'error deleting node'
-                print q_node, f_node, len(setN)
+                print('error deleting node')
+                print(q_node, f_node, len(setN))
             new_point = 0.5*(setN[q_node] + setN[f_node])
             new_index = len(setN)
             setN.append(new_point)

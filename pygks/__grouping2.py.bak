@@ -2,8 +2,8 @@
 
 from copy import deepcopy
 from numpy import *
-from oldgraph.classes.graph import graph
-from oldgraph.algorithms.accessibility import connected_components,accessibility
+from pygraph.classes.graph import graph
+from pygraph.algorithms.accessibility import connected_components,accessibility
 import itertools
 
 def is_max(node,gr,density):
@@ -56,7 +56,7 @@ def group(setN,gr,write_mark,minimum_cluster,alpha):
         remain_set.remove(unlabeled_max)
     #algorithm 2
     #find boundary edges
-    cluster_centers = list(clusters.values())
+    cluster_centers = clusters.values()
 ##    print len(cluster_centers),cluster_centers
     borders = []
     for each_edge in gr.edges():
@@ -68,7 +68,7 @@ def group(setN,gr,write_mark,minimum_cluster,alpha):
     group_count = len(set(connected_groups.values()))
     big_cluster_head = []
     tmp_set_appeared = set([])
-    for head,group_index in list(connected_groups.items()):
+    for head,group_index in connected_groups.items():
         if group_index not in tmp_set_appeared:
             big_cluster_head.append(head)
             tmp_set_appeared.add(group_index)
@@ -76,13 +76,13 @@ def group(setN,gr,write_mark,minimum_cluster,alpha):
     #construct edge set
     heads_tails = accessibility(gr)
     head_and_tail = {}
-    for head,tail in list(heads_tails.items()):
+    for head,tail in heads_tails.items():
         if head in big_cluster_head:
             head_and_tail[connected_groups[head]] = tail
 
     #tresholds of the super clusters
     Gc = {}
-    for head,tail in list(head_and_tail.items()):
+    for head,tail in head_and_tail.items():
         tmp_tresh = 0.0
         count = 0.0
         for each_edge in itertools.combinations(tail,2):
@@ -105,7 +105,7 @@ def group(setN,gr,write_mark,minimum_cluster,alpha):
         Gtresh = Gc[connected_groups[current_border[0]]]
 ##        print Dca - Dab,Dcb - Dab,Gtresh,'x'
         if connected_groups[current_border[0]] != connected_groups[current_border[1]]:
-            input('there be a problem')
+            raw_input('there be a problem')
         if ((Dca - Dab < Gtresh) | (Dcb - Dab < Gtresh)) == False:
             clusterA = clusters[current_border[0]]
             clusterB = clusters[current_border[1]]
@@ -135,27 +135,27 @@ def group(setN,gr,write_mark,minimum_cluster,alpha):
 
             grade = minimum_cluster - group_count
             
-            from oldgraph.algorithms.minmax import cut_tree
+            from pygraph.algorithms.minmax import cut_tree
             yourcut = cut_tree(gr)
 ##            print 'cut tree',yourcut.values(),grade
-            yourset = list(yourcut.values())
+            yourset = yourcut.values()
             for i in range(grade):
-                print(min(yourset))
+                print min(yourset)
                 yourset.remove(min(yourset))
             max_degree = min(yourset)
 ##            print max_degree,yourset
             
-            for edge_name, cut_degree in list(yourcut.items()):
+            for edge_name, cut_degree in yourcut.items():
                 if (cut_degree < max_degree + 1) and (gr.has_edge(edge_name)):
 ##                    print edge_name
                     gr.del_edge(edge_name)
-                    print('cluster break x 1',edge_name)
+                    print 'cluster break x 1',edge_name
 
 
 if __name__ == '__main__':
     gr = graph()
     setN = [array([0.0,0.0]),array([1.0,0.0]),array([0.5,0.5]),array([0.5,1.0]),array([-0.1,-0.1]),array([2.0,1.0]),array([2.0,0.0]),array([1.5,0.5])]
-    gr.add_nodes(list(range(8)))
+    gr.add_nodes(range(8))
     gr.add_edge((0,1))
     gr.add_edge((0,2))
     gr.add_edge((2,1))
@@ -165,5 +165,5 @@ if __name__ == '__main__':
     gr.add_edge((5,7))
     gr.add_edge((7,6))
     group(setN,gr,True,1,0.01)
-    print(gr,connected_components(gr))
+    print gr,connected_components(gr)
 

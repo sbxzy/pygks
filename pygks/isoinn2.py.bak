@@ -1,8 +1,8 @@
 """The single layer SOINN algorithm procedures, for developers only."""
 from numpy import *
-from . import __grouping2 as grouping2
+import __grouping2 as grouping2
 from math import isnan
-from oldgraph.classes.graph import graph
+from pygraph.classes.graph import graph
 
 winner_index = 0
 winner_2nd_index = 0
@@ -127,8 +127,8 @@ def remove_node(index):
     numbers.pop(-1)
     if len(setN) != index:
         if len(gr.neighbors(index)) != bfc:
-            print(index,bfc,gr.neighbors(index))
-            input('remove error')
+            print index,bfc,gr.neighbors(index)
+            raw_input('remove error')
     return
 
 def come_together():

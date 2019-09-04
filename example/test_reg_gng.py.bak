@@ -15,7 +15,7 @@ test_y = the_reg.predict(test_x)
 r2 = csv_reader('reg_intro.csv')
 testX, testY = r2.separate_label()
 from sklearn.metrics import mean_squared_error
-print(mean_squared_error(testY,the_reg.predict(testX)))
+print mean_squared_error(testY,the_reg.predict(testX))
 import matplotlib.pyplot as plt
 fig = plt.figure()
 r_draw = csv_reader('reg_intro.csv')
@@ -26,7 +26,7 @@ for each in X_raw:
     if i % 3 == 0:
         X_draw.append(X_raw[i])
     i += 1
-print(X_raw[0])
+print X_raw[0]
 ax = fig.add_subplot(111)
 for i in range(len(X_draw)):
     ax.plot(X_draw[i][0], X_draw[i][1], '.', color = '0.8')

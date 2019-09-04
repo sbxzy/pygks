@@ -1,8 +1,8 @@
-import gng2
+from . import gng2
 from pygraph.classes.graph import graph
 from pygraph.algorithms.minmax import cut_tree
 from pygraph.algorithms.accessibility import connected_components
-from utils import __dict_reverse as dict_reverse
+from .utils import __dict_reverse as dict_reverse
 import itertools
 import time
 from numpy import array,sum,sqrt
@@ -32,10 +32,10 @@ class data_block:
                 gng2.step(n_X,n_Y,t)
 
         gng2.step(array([]),0,-1)
-        print 'time cost',time.time() - timecost
+        print('time cost',time.time() - timecost)
         self.nodes = gng2.setN
         self.gr = gng2.gr
-        print len(self.nodes)
+        print(len(self.nodes))
 
     def output_graph(self):
         """Return the topology structure as a python-graph."""
@@ -77,7 +77,7 @@ class data_block:
         #for kernel order
         cut_dict = cut_tree(self.gr)
         cut_places = set(cut_dict.values())
-        how_many_kernel_orders = range(5)
+        how_many_kernel_orders = list(range(5))
         kernel_orders = []
         bloods = 0.0
         for kernel_tick in how_many_kernel_orders:
@@ -173,28 +173,28 @@ class data_block:
         #find the largest group
         group_counts = dict_reverse(groups)
         max_count = 0
-        for keys,values in group_counts.items():
+        for keys,values in list(group_counts.items()):
             if len(values) > max_count:
                 max_count = len(values)
                 max_group = keys
         
         affines = {}
-        for keys,values in groups.items():
+        for keys,values in list(groups.items()):
             if values == max_group:
                 affines[values] = positive
             else:
                 affines[values] = negative
                 
         #this is only for outlier detection
-        for values in groups.values():
-            if values not in affines.keys():
+        for values in list(groups.values()):
+            if values not in list(affines.keys()):
                 affines[values] = -1      
-        for keys,values in groups.items():
+        for keys,values in list(groups.items()):
             groups[keys] = affines[values]
         labels_final = []
         for i in range(len(self.nodes)):
             labels_final.append(groups[i])
-        print labels_final
+        print(labels_final)
         return self.nodes, labels_final
 
     def counts(self):
@@ -202,5 +202,5 @@ class data_block:
         return gng2.accumulated, gng2.accumulated_error
 
 if __name__ == '__main__':
-    print 'sb'
+    print('sb')
         

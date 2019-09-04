@@ -7,4 +7,4 @@ setup(name='pygks',
       author_email='lordxzy@qq.com',
       packages=['pygks'],
      )
-print 'finished installation'
+print('finished installation')

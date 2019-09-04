@@ -12,14 +12,14 @@ testX, testy = r2.separate_label()
 nnReg = ISOINNregressor(K = 10, age_max = 300, nn_lambda = 350, alpha = 10, smooth = None,  del_noise = True)
 nnReg.fit(trainX, trainy)
 
-print(len(testX[0]),'dimension')
-print(len(nnReg.nodes),'nodes')
+print len(testX[0]),'dimension'
+print len(nnReg.nodes),'nodes'
 predicty = nnReg.predict(testX)
 delets = []
 i = 0
 for each in predicty:
     if isnan(each) or isinf(each):
-        print((i,each,'error after density estimation'))
+        print(i,each,'error after density estimation')
         delets.append(i)
     i += 1
 
@@ -27,6 +27,6 @@ for i in range(len(delets)):
     testy.pop(delets[i]-i)
     predicty.pop(delets[i]-i)
 
-print(len(delets),'failed points')
-print(mean_squared_error(testy,predicty))
+print len(delets),'failed points'
+print mean_squared_error(testy,predicty)
 

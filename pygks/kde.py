@@ -2,7 +2,7 @@ from numpy import array, matrix,log
 from math import exp
 from numpy import identity
 from numpy import zeros
-from __gaussian_custom import norm_pdf_multivariate
+from .__gaussian_custom import norm_pdf_multivariate
 
 class density:
     """This is a kernel density estimation framework, but not the complete algorithm.
@@ -36,7 +36,7 @@ class density:
         self.countN = countN
         self.k_i = countN / float(sum(countN))
         if dimension != len(self.setN[0]):
-            raw_input('dimension error')
+            input('dimension error')
         self.bandwidth = self.cut_array(band_raw,self.validate_position)
         self.sigma = matrix(identity(dimension))
         self.mu = zeros(dimension)

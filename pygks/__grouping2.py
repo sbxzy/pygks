@@ -135,7 +135,7 @@ def group(setN,gr,write_mark,minimum_cluster,alpha):
 
             grade = minimum_cluster - group_count
             
-            from oldgraph.algorithms.minmax import cut_tree
+            from pygraph.algorithms.minmax import cut_tree
             yourcut = cut_tree(gr)
 ##            print 'cut tree',yourcut.values(),grade
             yourset = list(yourcut.values())
